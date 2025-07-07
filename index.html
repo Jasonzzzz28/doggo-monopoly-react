@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doggo Monopoly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: #FFF5E6;
+            color: #5A3E36;
+        }
+        
+        .doggo-table {
+            background: radial-gradient(circle, #F8E5D6 0%, #E8C4A8 100%);
+            border: 12px solid #D4A76A;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .player-avatar {
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .player-avatar:hover {
+            transform: scale(1.1);
+            border-color: #FF9F1C;
+        }
+        
+        .player-info-tooltip {
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .player-avatar:hover + .player-info-tooltip {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .floating-dog {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .paw-print {
+            position: absolute;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        /* Landing page specific */
+        .landing-bg {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFD6A5 100%);
+        }
+        
+        .welcome-box {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .landing-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .landing-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .store-card-purchased {
+            position: relative;
+        }
+        
+        .store-card-purchased::after {
+            content: "UNFINISHED";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #EF4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Landing Page -->
+    <div id="landing-page" class="fixed inset-0 z-50 landing-bg flex flex-col items-center justify-center p-4 transition-opacity duration-500">
+        <div class="welcome-box rounded-3xl p-8 max-w-2xl w-full shadow-xl border-4 border-amber-200">
+            <div class="text-center mb-8">
+                <div class="flex justify-center items-center mb-6">
+                    <i class="fas fa-paw text-amber-600 text-5xl mr-4"></i>
+                    <h1 class="text-5xl font-bold text-amber-800">Doggo Monopoly</h1>
+                </div>
+                <p class="text-xl text-amber-900 mb-2">The cutest business strategy game for dog lovers!</p>
+                <p class="text-lg text-amber-800">Build your empire one tail wag at a time.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <button onclick="showCreateGamePanel()" class="landing-btn bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-white font-bold py-4 px-6 rounded-2xl flex flex-col items-center justify-center shadow-lg">
+                    <i class="fas fa-plus-circle text-2xl mb-2"></i>
+                    <span>Create Game</span>
+                </button>
+                
+                <button onclick="showJoinGamePanel()" class="landing-btn bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-2xl flex flex-col items-center justify-center shadow-lg">
+                    <i class="fas fa-sign-in-alt text-2xl mb-2"></i>
+                    <span>Join Game</span>
+                </button>
+                
+                <button class="landing-btn bg-gradient-to-br from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-2xl flex flex-col items-center justify-center shadow-lg">
+                    <i class="fas fa-question-circle text-2xl mb-2"></i>
+                    <span>How to Play</span>
+                </button>
+            </div>
+
+            <!-- Join Game Panel -->
+            <div id="join-game-panel" class="hidden bg-white rounded-2xl p-6 shadow-xl max-w-md w-full mx-auto mb-8">
+                <h3 class="text-xl font-bold text-center mb-4 text-amber-800">Join Existing Game</h3>
+                <div class="mb-4">
+                    <label class="block text-amber-700 mb-2">Your Name:</label>
+                    <input type="text" id="join-player-name-input" placeholder="Enter your name" class="w-full px-4 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-amber-700 mb-2">Enter Game Code:</label>
+                    <input type="text" placeholder="ABCD12" class="w-full px-4 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500">
+                </div>
+                <button onclick="joinGame()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl">
+                    Join Game
+                </button>
+            </div>
+
+            <!-- Create Game Panel -->
+            <div id="create-game-panel" class="hidden bg-white rounded-2xl p-6 shadow-xl max-w-md w-full mx-auto mb-8">
+                <h3 class="text-xl font-bold text-center mb-4 text-amber-800">Create New Game</h3>
+                <div class="mb-4">
+                    <label class="block text-amber-700 mb-2">Your Name:</label>
+                    <input type="text" id="player-name-input" placeholder="Enter your name" class="w-full px-4 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-amber-700 mb-2">Number of Players:</label>
+                    <select id="player-count-select" class="w-full px-4 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500">
+                        <option value="2">2 Players</option>
+                        <option value="3">3 Players</option>
+                        <option value="4" selected>4 Players</option>
+                    </select>
+                </div>
+                <button onclick="createGame()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-xl">
+                    Create Game
+                </button>
+            </div>
+            
+        </div>
+        
+        <!-- Waiting Room (initially hidden) -->
+        <div id="waiting-room" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="welcome-box rounded-3xl p-8 max-w-2xl w-full shadow-xl border-4 border-amber-200">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-amber-800 mb-2">Waiting Room</h2>
+                    <p class="text-lg text-amber-700">Game Code: <span id="game-code" class="font-bold">ABCD12</span></p>
+                    <p class="text-amber-600">Waiting for players to join...</p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6" id="player-slots-container">
+                    <!-- Player slots will be added here dynamically -->
+                </div>
+                
+                <div class="flex justify-center">
+                    <button id="start-game-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl hidden">
+                        Start Game
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-4 right-4">
+            <div class="floating-dog bg-white p-3 rounded-full shadow-lg">
+                <img src="https://placedog.net/100/100?random=1" alt="Happy Dog" class="w-16 h-16 rounded-full object-cover border-4 border-amber-300">
+            </div>
+        </div>
+        
+        <!-- Random paw prints -->
+        <div class="paw-print top-1/4 left-1/4 text-amber-300 text-4xl"><i class="fas fa-paw"></i></div>
+        <div class="paw-print top-1/3 right-1/4 text-amber-300 text-4xl"><i class="fas fa-paw"></i></div>
+        <div class="paw-print bottom-1/4 left-1/3 text-amber-300 text-4xl"><i class="fas fa-paw"></i></div>
+        <div class="paw-print bottom-1/3 right-1/3 text-amber-300 text-4xl"><i class="fas fa-paw"></i></div>
+    </div>
+    
+    <!-- Purchase Confirmation Modal -->
+    <div id="purchase-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl p-6 shadow-2xl max-w-md w-full border-4 border-amber-200">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-amber-800 mb-2">Purchase Store</h3>
+                <div id="purchase-store-info" class="bg-amber-50 rounded-xl p-4 mb-4">
+                    <!-- Store info will be populated here -->
+                </div>
+                <div class="flex items-center justify-center mb-4">
+                    <i class="fas fa-coins text-yellow-500 text-2xl mr-2"></i>
+                    <span id="purchase-cost" class="text-2xl font-bold text-amber-800">0</span>
+                </div>
+                <p class="text-sm text-amber-700">This will be your <span id="store-number" class="font-bold">1st</span> store purchase</p>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button onclick="closePurchaseModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded-xl">
+                    Cancel
+                </button>
+                <button onclick="confirmPurchase()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-xl">
+                    Purchase
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Build Store Modal -->
+    <div id="build-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl p-6 shadow-2xl max-w-md w-full border-4 border-amber-200">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-amber-800 mb-2">Build Store</h3>
+                <div id="build-store-info" class="bg-amber-50 rounded-xl p-4 mb-4">
+                    <!-- Store info will be populated here -->
+                </div>
+                <div class="flex items-center justify-center mb-4">
+                    <i class="fas fa-coins text-yellow-500 text-2xl mr-2"></i>
+                    <span id="build-cost" class="text-2xl font-bold text-amber-800">0</span>
+                </div>
+                <p class="text-sm text-amber-700">Build this store to start earning coins!</p>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button onclick="closeBuildModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded-xl">
+                    Cancel
+                </button>
+                <button onclick="confirmBuild()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl">
+                    Build
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Screen (initially hidden) -->
+    <div id="game-screen" class="hidden min-h-screen p-4">
+        <!-- Game Header -->
+        <header class="flex justify-between items-center mb-4">
+            <div class="flex items-center">
+                <i class="fas fa-paw text-amber-600 text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold text-amber-800">Doggo Monopoly</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="bg-white rounded-full px-4 py-2 shadow-md flex items-center">
+                    <i class="fas fa-coins text-yellow-500 mr-2"></i>
+                    <span class="font-bold">${INITIAL_MONEY}</span>
+                </div>
+                
+                <button class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-4 py-2 rounded-full font-bold flex items-center">
+                    <i class="fas fa-cog mr-2"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Main Game Area -->
+        <main class="relative mb-4 mt-20">
+            <!-- Players around the table -->
+            <div class="relative">
+                <div id="game-players-container">
+                    <!-- Player positions will be added here dynamically -->
+                </div>
+                
+                <!-- Main Table -->
+                <div class="doggo-table mx-auto rounded-[100px] w-full max-w-4xl h-[450px] flex flex-col items-center justify-center p-6 relative">
+                    <!-- NPC Doggo Cards -->
+                    <div class="w-full max-w-xl mb-8">
+                        <h2 class="text-center font-bold text-lg mb-2 text-amber-900">Visiting Doggos</h2>
+                        <div class="flex justify-center space-x-4">
+                            <!-- Star indicator for first card -->
+                            <div class="flex items-center mr-2">
+                                <i class="fas fa-star text-yellow-500 text-xl"></i>
+                                <span class="text-yellow-500 text-sm font-bold">START</span>
+                            </div>
+                            
+                            <!-- Doggo Card 1 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                                    <img src="https://placedog.net/100/100?random=5" alt="Doggo" class="w-full h-full object-cover">
+                                </div>
+                                <p class="text-xs font-bold text-center">Golden Retriever</p>
+                                <p class="text-xs text-center mt-1">Loves bones</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">15</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Doggo Card 2 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                                    <img src="https://placedog.net/100/100?random=6" alt="Doggo" class="w-full h-full object-cover">
+                                </div>
+                                <p class="text-xs font-bold text-center">Poodle</p>
+                                <p class="text-xs text-center mt-1">Fancy treats</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">20</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Doggo Card 3 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                                    <img src="https://placedog.net/100/100?random=7" alt="Doggo" class="w-full h-full object-cover">
+                                </div>
+                                <p class="text-xs font-bold text-center">Dachshund</p>
+                                <p class="text-xs text-center mt-1">Small snacks</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">12</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Doggo Card 4 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                                    <img src="https://placedog.net/100/100?random=8" alt="Doggo" class="w-full h-full object-cover">
+                                </div>
+                                <p class="text-xs font-bold text-center">Bulldog</p>
+                                <p class="text-xs text-center mt-1">Hearty meals</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">18</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Store Card Market -->
+                    <div class="w-full max-w-xl">
+                        <h2 class="text-center font-bold text-lg mb-2 text-amber-900">Available Stores</h2>
+                        <div class="flex justify-center space-x-4">
+                            <!-- Store Card 1 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Toy Shop', 30, 'fas fa-store', 'blue')">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 mb-2 flex items-center justify-center">
+                                    <i class="fas fa-store text-blue-500 text-xl"></i>
+                                </div>
+                                <p class="text-xs font-bold text-center">Toy Shop</p>
+                                <p class="text-xs text-center mt-1">+2 coins for playful dogs</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">30</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Store Card 2 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Grooming Spa', 40, 'fas fa-spa', 'purple')">
+                                <div class="w-12 h-12 rounded-full bg-purple-100 mb-2 flex items-center justify-center">
+                                    <i class="fas fa-spa text-purple-500 text-xl"></i>
+                                </div>
+                                <p class="text-xs font-bold text-center">Grooming Spa</p>
+                                <p class="text-xs text-center mt-1">+3 coins for fancy dogs</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">40</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Store Card 3 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Bone Bakery', 25, 'fas fa-bone', 'amber')">
+                                <div class="w-12 h-12 rounded-full bg-amber-100 mb-2 flex items-center justify-center">
+                                    <i class="fas fa-bone text-amber-500 text-xl"></i>
+                                </div>
+                                <p class="text-xs font-bold text-center">Bone Bakery</p>
+                                <p class="text-xs text-center mt-1">+1 coin for all dogs</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">25</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Store Card 4 -->
+                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Dog Park', 35, 'fas fa-paw', 'green')">
+                                <div class="w-12 h-12 rounded-full bg-green-100 mb-2 flex items-center justify-center">
+                                    <i class="fas fa-paw text-green-500 text-xl"></i>
+                                </div>
+                                <p class="text-xs font-bold text-center">Dog Park</p>
+                                <p class="text-xs text-center mt-1">Attracts more dogs</p>
+                                <div class="mt-auto flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                    <span class="text-xs font-bold">35</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Player Dashboard (Bottom) -->
+            <div class="mt-4 bg-white rounded-2xl shadow-xl p-4 max-w-4xl mx-auto">
+                <div class="flex items-center mb-4">
+                    <div class="player-avatar w-16 h-16 rounded-full bg-white shadow-md overflow-hidden border-4 border-amber-300 mr-4">
+                        <img src="https://placedog.net/100/100?random=9" alt="You" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-xl">Your Empire</h2>
+                        <div class="flex items-center mt-1">
+                            <i class="fas fa-coins text-yellow-500 mr-1"></i>
+                            <span class="font-bold mr-4">${INITIAL_MONEY} coins</span>
+                            <span class="text-sm bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Your Turn</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Built Stores -->
+                <div class="mb-6">
+                    <h3 class="font-bold mb-2 flex items-center">
+                        <i class="fas fa-store mr-2 text-amber-600"></i>
+                        Your Stores
+                    </h3>
+                    <div id="player-stores" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Stores will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Dish Cards -->
+                <div class="mb-6">
+                    <h3 class="font-bold mb-2 flex items-center">
+                        <i class="fas fa-utensils mr-2 text-amber-600"></i>
+                        Your Dish Cards
+                    </h3>
+                    <div class="flex space-x-3 overflow-x-auto pb-2">
+                        <!-- Dish Card 1 -->
+                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-red-100 mb-2 flex items-center justify-center">
+                                <i class="fas fa-drumstick-bite text-red-500"></i>
+                            </div>
+                            <p class="text-xs font-bold text-center">Steak</p>
+                            <div class="mt-auto flex items-center">
+                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                <span class="text-xs font-bold">15</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Dish Card 2 -->
+                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 mb-2 flex items-center justify-center">
+                                <i class="fas fa-fish text-blue-500"></i>
+                            </div>
+                            <p class="text-xs font-bold text-center">Salmon</p>
+                            <div class="mt-auto flex items-center">
+                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                <span class="text-xs font-bold">12</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Dish Card 3 -->
+                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-green-100 mb-2 flex items-center justify-center">
+                                <i class="fas fa-carrot text-green-500"></i>
+                            </div>
+                            <p class="text-xs font-bold text-center">Veggie Mix</p>
+                            <div class="mt-auto flex items-center">
+                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                <span class="text-xs font-bold">10</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Dish Card 4 -->
+                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-yellow-100 mb-2 flex items-center justify-center">
+                                <i class="fas fa-cookie text-yellow-600"></i>
+                            </div>
+                            <p class="text-xs font-bold text-center">Dog Biscuit</p>
+                            <div class="mt-auto flex items-center">
+                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                <span class="text-xs font-bold">8</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Dish Card 5 -->
+                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 mb-2 flex items-center justify-center">
+                                <i class="fas fa-ice-cream text-purple-500"></i>
+                            </div>
+                            <p class="text-xs font-bold text-center">Frosty Paws</p>
+                            <div class="mt-auto flex items-center">
+                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                                <span class="text-xs font-bold">18</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Draw and Discard Piles -->
+                        <div class="flex items-center space-x-2 flex-shrink-0">
+                            <div class="bg-gray-100 rounded-lg p-2 shadow-inner w-20 h-28 flex flex-col items-center justify-center">
+                                <i class="fas fa-layer-group text-gray-500 text-2xl"></i>
+                                <p class="text-xs mt-1">Draw (<span id="draw-pile-count"></span>)</p>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg p-2 shadow-md w-20 h-28 flex flex-col items-center justify-center">
+                                <div class="w-10 h-10 rounded-full bg-red-100 mb-1 flex items-center justify-center">
+                                    <i class="fas fa-hamburger text-red-500"></i>
+                                </div>
+                                <p class="text-xs">Discard (<span id="discard-pile-count"></span>)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button class="action-btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center">
+                        <i class="fas fa-store mr-2"></i>
+                        Take Store Card
+                    </button>
+                    
+                    <button class="action-btn bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center">
+                        <i class="fas fa-hammer mr-2"></i>
+                        Build Store
+                    </button>
+                    
+                    <button class="action-btn bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center">
+                        <i class="fas fa-dog mr-2"></i>
+                        Host Doggo
+                    </button>
+                    
+                    <button class="action-btn bg-amber-500 hover:bg-amber-600 text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center">
+                        <i class="fas fa-flag-checkered mr-2"></i>
+                        End Turn
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Configuration
+        const INITIAL_MONEY = 250;
+        const MAX_STORES = 8;
+        const INITIAL_DRAW_PILE_COUNT = 8; // Configurable draw pile count
+        const INITIAL_DISCARD_PILE_COUNT = 0; // Configurable discard pile count
+        
+        // Game state
+        let playerCoins = INITIAL_MONEY;
+        let storesPurchased = 0;
+        let purchasedStores = [];
+        let builtStores = [];
+        let selectedPlayerCount = 4; // Default to 4 players
+        let currentDrawPileCount = INITIAL_DRAW_PILE_COUNT; // Current cards in draw pile
+        let currentDiscardPileCount = INITIAL_DISCARD_PILE_COUNT; // Current cards in discard pile
+        
+        // Store purchase costs: 1st is free, then 2,3,4,7,8,9,10
+        const storePurchaseCosts = [0, 2, 3, 4, 7, 8, 9, 10];
+        
+        // Panel control functions
+        function showJoinGamePanel() {
+            document.getElementById('join-game-panel').classList.remove('hidden');
+            document.getElementById('create-game-panel').classList.add('hidden');
+        }
+        
+        function showCreateGamePanel() {
+            document.getElementById('create-game-panel').classList.remove('hidden');
+            document.getElementById('join-game-panel').classList.add('hidden');
+        }
+        
+        function joinGame() {
+            // In a real app, this would validate the game code
+            // For now, set a default player count of 4 when joining
+            selectedPlayerCount = 4;
+            showGameScreen();
+        }
+        
+        function createGame() {
+            // Get the selected number of players
+            const playerCount = parseInt(document.getElementById('player-count-select').value);
+            selectedPlayerCount = playerCount; // Store globally
+            
+            // POST to server to create game
+            fetch('/create-game', {
+                method: 'POST',
+                body: JSON.stringify({ numberOfPlayers: playerCount }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('game-code').textContent = data.gameId;
+            })
+            
+            // Generate player slots based on selected count
+            generatePlayerSlots(playerCount);
+            
+            // Show waiting room
+            document.getElementById('waiting-room').classList.remove('hidden');
+            
+            // In a real app, this would create the game session
+            // and wait for other players to join via WebSocket
+        }
+        
+        function generatePlayerSlots(playerCount) {
+            const container = document.getElementById('player-slots-container');
+            container.innerHTML = '';
+            
+            // Always show the host (first player)
+            const hostSlot = document.createElement('div');
+            hostSlot.className = 'bg-amber-50 rounded-xl p-4 flex items-center';
+            hostSlot.innerHTML = `
+                <div class="w-12 h-12 rounded-full bg-white mr-4 overflow-hidden">
+                    <img src="https://placedog.net/100/100?random=10" alt="Player" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <p class="font-bold">You (Host)</p>
+                    <p class="text-sm text-amber-600">Ready</p>
+                </div>
+            `;
+            container.appendChild(hostSlot);
+            
+            // Generate empty slots for remaining players
+            for (let i = 1; i < playerCount; i++) {
+                const emptySlot = document.createElement('div');
+                emptySlot.className = 'bg-gray-100 rounded-xl p-4 flex items-center';
+                emptySlot.innerHTML = `
+                    <div class="w-12 h-12 rounded-full bg-gray-200 mr-4 flex items-center justify-center">
+                        <i class="fas fa-user-plus text-gray-400"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-500">Waiting for player...</p>
+                    </div>
+                `;
+                container.appendChild(emptySlot);
+            }
+        }
+        
+        function startGame() {
+            document.getElementById('waiting-room').classList.add('hidden');
+            showGameScreen();
+        }
+        
+        // Simple function to switch from landing page to game screen
+        function showGameScreen() {
+            document.getElementById('landing-page').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            // Generate game players based on selected count
+            generateGamePlayers(selectedPlayerCount);
+            
+            // Initialize coin display
+            updatePlayerCoins();
+            
+            // Initialize draw pile count
+            updateDrawPileCount();
+            
+            // Initialize discard pile count
+            updateDiscardPileCount();
+            
+            // After transition completes, remove landing page from DOM
+            setTimeout(() => {
+                document.getElementById('landing-page').remove();
+            }, 500);
+        }
+        
+        // Store purchasing functions
+        function showPurchaseModal(storeName, buildCost, iconClass, colorClass) {
+            // Check if player has reached the maximum number of stores (8)
+            if (purchasedStores.length + builtStores.length >= MAX_STORES) {
+                showNotification('You have reached the maximum of 8 stores!');
+                return;
+            }
+            
+            const purchaseCost = storePurchaseCosts[storesPurchased];
+            const storeNumber = storesPurchased + 1;
+            
+            // Update modal content
+            document.getElementById('purchase-store-info').innerHTML = `
+                <div class="flex items-center justify-center mb-2">
+                    <div class="w-12 h-12 rounded-full bg-${colorClass}-100 flex items-center justify-center mr-3">
+                        <i class="${iconClass} text-${colorClass}-500 text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-amber-800">${storeName}</p>
+                        <p class="text-sm text-amber-600">Build cost: ${buildCost} coins</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('purchase-cost').textContent = purchaseCost;
+            document.getElementById('store-number').textContent = getOrdinal(storeNumber);
+            
+            // Store modal data
+            document.getElementById('purchase-modal').setAttribute('data-store-name', storeName);
+            document.getElementById('purchase-modal').setAttribute('data-build-cost', buildCost);
+            document.getElementById('purchase-modal').setAttribute('data-icon-class', iconClass);
+            document.getElementById('purchase-modal').setAttribute('data-color-class', colorClass);
+            
+            // Show modal
+            document.getElementById('purchase-modal').classList.remove('hidden');
+        }
+        
+        function closePurchaseModal() {
+            document.getElementById('purchase-modal').classList.add('hidden');
+        }
+        
+        function confirmPurchase() {
+            const storeName = document.getElementById('purchase-modal').getAttribute('data-store-name');
+            const buildCost = parseInt(document.getElementById('purchase-modal').getAttribute('data-build-cost'));
+            const iconClass = document.getElementById('purchase-modal').getAttribute('data-icon-class');
+            const colorClass = document.getElementById('purchase-modal').getAttribute('data-color-class');
+            const purchaseCost = storePurchaseCosts[storesPurchased];
+            
+            // Check if player has reached the maximum number of stores (8)
+            if (purchasedStores.length + builtStores.length >= MAX_STORES) {
+                showNotification('You have reached the maximum of 8 stores!');
+                closePurchaseModal();
+                return;
+            }
+            
+            // Check if player has enough coins
+            if (playerCoins < purchaseCost) {
+                alert('Not enough coins to purchase this store!');
+                return;
+            }
+            
+            // Deduct coins
+            playerCoins -= purchaseCost;
+            updatePlayerCoins();
+            
+            // Add to purchased stores
+            const storeData = {
+                name: storeName,
+                buildCost: buildCost,
+                iconClass: iconClass,
+                colorClass: colorClass,
+                id: Date.now() // Unique ID for the store
+            };
+            
+            purchasedStores.push(storeData);
+            storesPurchased++;
+            
+            // Update UI
+            updatePlayerStores();
+            
+            // Close modal
+            closePurchaseModal();
+            
+            // Show success message
+            showNotification(`Successfully purchased ${storeName}!`);
+        }
+        
+        // Store building functions
+        function showBuildModal(storeData) {
+            // Update modal content
+            document.getElementById('build-store-info').innerHTML = `
+                <div class="flex items-center justify-center mb-2">
+                    <div class="w-12 h-12 rounded-full bg-${storeData.colorClass}-100 flex items-center justify-center mr-3">
+                        <i class="${storeData.iconClass} text-${storeData.colorClass}-500 text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-amber-800">${storeData.name}</p>
+                        <p class="text-sm text-amber-600">Ready to build!</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('build-cost').textContent = storeData.buildCost;
+            
+            // Store modal data
+            document.getElementById('build-modal').setAttribute('data-store-id', storeData.id);
+            
+            // Show modal
+            document.getElementById('build-modal').classList.remove('hidden');
+        }
+        
+        function closeBuildModal() {
+            document.getElementById('build-modal').classList.add('hidden');
+        }
+        
+        function confirmBuild() {
+            const storeId = parseInt(document.getElementById('build-modal').getAttribute('data-store-id'));
+            const storeData = purchasedStores.find(store => store.id === storeId);
+            
+            if (!storeData) return;
+            
+            // Check if player has enough coins
+            if (playerCoins < storeData.buildCost) {
+                alert('Not enough coins to build this store!');
+                return;
+            }
+            
+            // Deduct coins
+            playerCoins -= storeData.buildCost;
+            updatePlayerCoins();
+            
+            // Move from purchased to built
+            purchasedStores = purchasedStores.filter(store => store.id !== storeId);
+            builtStores.push(storeData);
+            
+            // Update UI
+            updatePlayerStores();
+            
+            // Close modal
+            closeBuildModal();
+            
+            // Show success message
+            showNotification(`Successfully built ${storeData.name}!`);
+        }
+        
+        // UI update functions
+        function updatePlayerCoins() {
+            // Update header coin display
+            const headerCoinElement = document.querySelector('header .fas.fa-coins + span');
+            if (headerCoinElement) {
+                headerCoinElement.textContent = playerCoins;
+            }
+            
+            // Update player dashboard coin display
+            const dashboardCoinElement = document.querySelector('.player-avatar + div .fas.fa-coins + span');
+            if (dashboardCoinElement) {
+                dashboardCoinElement.textContent = playerCoins + ' coins';
+            }
+            
+            // Update any other coin displays
+            const coinElements = document.querySelectorAll('.fas.fa-coins + span, .fas.fa-coins + .font-bold');
+            coinElements.forEach(el => {
+                if (el.textContent.includes('coins')) {
+                    el.textContent = playerCoins;
+                }
+            });
+        }
+        
+        function updateDrawPileCount() {
+            const drawPileElement = document.getElementById('draw-pile-count');
+            if (drawPileElement) {
+                drawPileElement.textContent = currentDrawPileCount;
+            }
+        }
+        
+        function updateDiscardPileCount() {
+            const discardPileElement = document.getElementById('discard-pile-count');
+            if (discardPileElement) {
+                discardPileElement.textContent = currentDiscardPileCount;
+            }
+        }
+        
+        function updatePlayerStores() {
+            const storesContainer = document.getElementById('player-stores');
+            storesContainer.innerHTML = '';
+            
+            // Add purchased (unfinished) stores
+            purchasedStores.forEach(store => {
+                const storeElement = createStoreElement(store, false);
+                storesContainer.appendChild(storeElement);
+            });
+            
+            // Add built stores
+            builtStores.forEach(store => {
+                const storeElement = createStoreElement(store, true);
+                storesContainer.appendChild(storeElement);
+            });
+            
+            // Update store card availability
+            updateStoreCardAvailability();
+        }
+        
+        function updateStoreCardAvailability() {
+            const totalStores = purchasedStores.length + builtStores.length;
+            const storeCards = document.querySelectorAll('.card[onclick*="showPurchaseModal"]');
+            
+            storeCards.forEach(card => {
+                if (totalStores >= MAX_STORES) {
+                    card.classList.add('opacity-50', 'cursor-not-allowed');
+                    card.style.pointerEvents = 'none';
+                } else {
+                    card.classList.remove('opacity-50', 'cursor-not-allowed');
+                    card.style.pointerEvents = 'auto';
+                }
+            });
+        }
+        
+        function createStoreElement(store, isBuilt) {
+            const div = document.createElement('div');
+            div.className = `card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center cursor-pointer ${!isBuilt ? 'store-card-purchased' : ''}`;
+            
+            if (!isBuilt) {
+                div.onclick = () => showBuildModal(store);
+            }
+            
+            div.innerHTML = `
+                <div class="w-12 h-12 rounded-full bg-${store.colorClass}-100 mb-2 flex items-center justify-center">
+                    <i class="${store.iconClass} text-${store.colorClass}-500"></i>
+                </div>
+                <p class="text-xs font-bold text-center">${store.name}</p>
+                <div class="mt-auto flex items-center">
+                    <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
+                    <span class="text-xs font-bold">${store.buildCost}</span>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        // Utility functions
+        function getOrdinal(num) {
+            const suffixes = ['th', 'st', 'nd', 'rd'];
+            const v = num % 100;
+            return num + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+        }
+        
+        function showNotification(message) {
+            // Create a simple notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make cards clickable
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // In a real game, this would trigger game logic
+                    console.log('Card clicked:', this.querySelector('p')?.textContent);
+                });
+            });
+            
+            // Add floating animation to some elements
+            const floatingElements = document.querySelectorAll('.floating-dog, .player-avatar');
+            floatingElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.2}s`;
+            });
+            
+            // Start game button
+            document.getElementById('start-game-btn').addEventListener('click', startGame);
+            
+            // In a real app, this would check when all players have joined
+            // and show the start button to the host
+            setTimeout(() => {
+                document.getElementById('start-game-btn').classList.remove('hidden');
+            }, 2000);
+            
+            // Add random paw prints
+            for (let i = 0; i < 10; i++) {
+                const paw = document.createElement('div');
+                paw.className = 'paw-print text-amber-300 text-2xl';
+                paw.innerHTML = '<i class="fas fa-paw"></i>';
+                
+                // Random position
+                const left = Math.random() * 90 + 5;
+                const top = Math.random() * 90 + 5;
+                const rotation = Math.random() * 360;
+                
+                paw.style.left = `${left}%`;
+                paw.style.top = `${top}%`;
+                paw.style.transform = `rotate(${rotation}deg)`;
+                paw.style.opacity = Math.random() * 0.2 + 0.05;
+                
+                document.body.appendChild(paw);
+            }
+        });
+        
+        function generateGamePlayers(playerCount) {
+            const container = document.getElementById('game-players-container');
+            container.innerHTML = '';
+            
+            // We only show other players around the table (not the current player)
+            const otherPlayersCount = playerCount - 1;
+            
+            // Define player positions and colors for different player counts
+            const playerConfigs = {
+                0: [], // Only current player, no others to show
+                1: [
+                    { position: 'top', color: 'blue', random: 2 }
+                ],
+                2: [
+                    { position: 'top', color: 'blue', random: 2 },
+                    { position: 'right', color: 'red', random: 3 }
+                ],
+                3: [
+                    { position: 'top', color: 'blue', random: 2 },
+                    { position: 'right', color: 'red', random: 3 },
+                    { position: 'left', color: 'green', random: 4 }
+                ]
+            };
+            
+            const config = playerConfigs[otherPlayersCount] || playerConfigs[2];
+            
+            config.forEach((playerConfig, index) => {
+                const playerElement = document.createElement('div');
+                
+                // Set position classes based on player position
+                let positionClasses = '';
+                switch (playerConfig.position) {
+                    case 'top':
+                        positionClasses = 'absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2';
+                        break;
+                    case 'right':
+                        positionClasses = 'absolute right-[5%] top-1/2 transform translate-y-1/2';
+                        break;
+                    case 'left':
+                        positionClasses = 'absolute left-[5%] top-1/2 transform -translate-y-1/2';
+                        break;
+                    case 'bottom':
+                        positionClasses = 'absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2';
+                        break;
+                }
+                
+                playerElement.className = `${positionClasses} z-10 flex flex-col items-center`;
+                playerElement.innerHTML = `
+                    <div class="player-avatar w-16 h-16 rounded-full bg-white shadow-md overflow-hidden border-4 border-${playerConfig.color}-300">
+                        <img src="https://placedog.net/100/100?random=${playerConfig.random}" alt="Player ${index + 2}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="player-info-tooltip mt-2 bg-white p-2 rounded-lg shadow-lg text-center">
+                        <p class="font-bold">Player ${index + 2}</p>
+                        <div class="flex mt-1">
+                            <i class="fas fa-store text-${playerConfig.color}-500 mx-1" title="Store"></i>
+                            <i class="fas fa-bone text-amber-500 mx-1" title="Bone Bakery"></i>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(playerElement);
+            });
+        }
+    </script>
+</body>
+</html>
