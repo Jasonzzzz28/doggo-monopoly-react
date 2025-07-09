@@ -207,8 +207,6 @@ function startGame() {
 
 // Simple function to switch from landing page to game screen
 function showGameScreen(gameData) {
-    document.getElementById('landing-page').classList.add('opacity-0', 'pointer-events-none');
-    document.getElementById('game-screen').classList.remove('hidden');
     const playerSimpleId = localStorage.getItem('playerSimpleId');
     
     // Generate game players based on selected count
@@ -234,23 +232,28 @@ function showGameScreen(gameData) {
 
     const storeIds = gameData.storeMarket.visible.map(store => store.type);
     updateStoreCards(storeIds);
+
+    const existingStoreCards = document.querySelectorAll('.store-card');
+    existingStoreCards.forEach(card => {
+        card.onclick = () => console.log('Store card', card.id);
+    });
+    document.getElementById('landing-page').classList.add('opacity-0', 'pointer-events-none');
+    document.getElementById('game-screen').classList.remove('hidden');
 }
 
 // Store purchasing functions
-function showPurchaseModal(storeName, buildCost, iconClass, colorClass) {
-    // Check if player has reached the maximum number of stores (8)
-    if (purchasedStores.length + builtStores.length >= MAX_STORES) {
-        showNotification('You have reached the maximum of 8 stores!');
-        return;
-    }
-    
-    const purchaseCost = storePurchaseCosts[storesPurchased];
+function showPurchaseModal(storeId) {  
+    const storeData = storesJson[storeId];
+    const purchaseCost = storeData.build_cost;
     const storeNumber = storesPurchased + 1;
+    const iconClass = storeData.icon;
+    const colorClass = storeData.color;
+    const storeName = storeData.name;
     
     // Update modal content
     document.getElementById('purchase-store-info').innerHTML = `
         <div class="flex items-center justify-center mb-2">
-            <div class="w-12 h-12 rounded-full bg-${colorClass}-100 flex items-center justify-center mr-3">
+            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-3">
                 <i class="${iconClass} text-${colorClass}-500 text-xl"></i>
             </div>
             <div class="text-left">
