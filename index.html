@@ -195,9 +195,9 @@
                 <div class="mb-4">
                     <label class="block text-amber-700 mb-2">Number of Players:</label>
                     <select id="player-count-select" class="w-full px-4 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500">
-                        <option value="2">2 Players</option>
+                        <option value="2" selected>2 Players</option>
                         <option value="3">3 Players</option>
-                        <option value="4" selected>4 Players</option>
+                        <option value="4">4 Players</option>
                     </select>
                 </div>
                 <button onclick="createGame()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-xl">
@@ -336,54 +336,62 @@
                             </div>
                             
                             <!-- Doggo Card 1 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                            <div class="doggo-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center" id="">
+                                <div class="image w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
                                     <img src="https://placedog.net/100/100?random=5" alt="Doggo" class="w-full h-full object-cover">
                                 </div>
-                                <p class="text-xs font-bold text-center">Golden Retriever</p>
-                                <p class="text-xs text-center mt-1">Loves bones</p>
+                                <p class="name text-xs font-bold text-center">Name</p>
+                                <p class="stores-visited text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-utensils text-amber-500 text-xs mr-1"></i>
+                                    <span class="dishes-eaten text-xs font-bold">0</span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">15</span>
+                                    <span class="bonus-coins text-xs font-bold">0</span>
                                 </div>
                             </div>
                             
                             <!-- Doggo Card 2 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                            <div class="doggo-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center" id="">
+                                <div class="image w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
                                     <img src="https://placedog.net/100/100?random=6" alt="Doggo" class="w-full h-full object-cover">
                                 </div>
-                                <p class="text-xs font-bold text-center">Poodle</p>
-                                <p class="text-xs text-center mt-1">Fancy treats</p>
+                                <p class="name text-xs font-bold text-center">Name</p>
+                                <p class="stores-visited text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-utensils text-amber-500 text-xs mr-1"></i>
+                                    <span class="dishes-eaten text-xs font-bold">0</span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">20</span>
+                                    <span class="bonus-coins text-xs font-bold">0</span>
                                 </div>
                             </div>
                             
                             <!-- Doggo Card 3 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                            <div class="doggo-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center" id="">
+                                <div class="image w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
                                     <img src="https://placedog.net/100/100?random=7" alt="Doggo" class="w-full h-full object-cover">
                                 </div>
-                                <p class="text-xs font-bold text-center">Dachshund</p>
-                                <p class="text-xs text-center mt-1">Small snacks</p>
+                                <p class="name text-xs font-bold text-center">Name</p>
+                                <p class="stores-visited text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-utensils text-amber-500 text-xs mr-1"></i>
+                                    <span class="dishes-eaten text-xs font-bold">0</span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">12</span>
+                                    <span class="bonus-coins text-xs font-bold">0</span>
                                 </div>
                             </div>
                             
                             <!-- Doggo Card 4 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
+                            <div class="doggo-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center" id="">
+                                <div class="image w-12 h-12 rounded-full bg-gray-200 mb-2 overflow-hidden">
                                     <img src="https://placedog.net/100/100?random=8" alt="Doggo" class="w-full h-full object-cover">
                                 </div>
-                                <p class="text-xs font-bold text-center">Bulldog</p>
-                                <p class="text-xs text-center mt-1">Hearty meals</p>
+                                <p class="name text-xs font-bold text-center">Name</p>
+                                <p class="stores-visited text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-utensils text-amber-500 text-xs mr-1"></i>
+                                    <span class="dishes-eaten text-xs font-bold">0</span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">18</span>
+                                    <span class="bonus-coins text-xs font-bold">0</span>
                                 </div>
                             </div>
                         </div>
@@ -394,54 +402,62 @@
                         <h2 class="text-center font-bold text-lg mb-2 text-amber-900">Available Stores</h2>
                         <div class="flex justify-center space-x-4">
                             <!-- Store Card 1 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Toy Shop', 30, 'fas fa-store', 'blue')">
-                                <div class="w-12 h-12 rounded-full bg-blue-100 mb-2 flex items-center justify-center">
-                                    <i class="fas fa-store text-blue-500 text-xl"></i>
+                            <div class="store-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Toy Shop', 30, 'fas fa-store', 'blue')">
+                                <div class="store-icon w-12 h-12 rounded-full bg-gray-100 mb-2 flex items-center justify-center">
                                 </div>
-                                <p class="text-xs font-bold text-center">Toy Shop</p>
-                                <p class="text-xs text-center mt-1">+2 coins for playful dogs</p>
+                                <p class="name text-xs font-bold text-center"></p>
+                                <p class="special-effect text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-hammer text-blue-500 text-xs mr-1"></i>
+                                    <span class="build-cost text-xs font-bold">0</span>
+                                    <span class="text-xs font-bold"> </span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">30</span>
+                                    <span class="income text-xs font-bold">0</span>
                                 </div>
                             </div>
                             
                             <!-- Store Card 2 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Grooming Spa', 40, 'fas fa-spa', 'purple')">
-                                <div class="w-12 h-12 rounded-full bg-purple-100 mb-2 flex items-center justify-center">
-                                    <i class="fas fa-spa text-purple-500 text-xl"></i>
+                            <div class="store-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Grooming Spa', 40, 'fas fa-spa', 'purple')">
+                                <div class="store-icon w-12 h-12 rounded-full bg-gray-100 mb-2 flex items-center justify-center">
                                 </div>
-                                <p class="text-xs font-bold text-center">Grooming Spa</p>
-                                <p class="text-xs text-center mt-1">+3 coins for fancy dogs</p>
+                                <p class="name text-xs font-bold text-center"></p>
+                                <p class="special-effect text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-hammer text-blue-500 text-xs mr-1"></i>
+                                    <span class="build-cost text-xs font-bold">0</span>
+                                    <span class="text-xs font-bold"> </span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">40</span>
+                                    <span class="income text-xs font-bold">0</span>
                                 </div>
                             </div>
                             
                             <!-- Store Card 3 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Bone Bakery', 25, 'fas fa-bone', 'amber')">
-                                <div class="w-12 h-12 rounded-full bg-amber-100 mb-2 flex items-center justify-center">
-                                    <i class="fas fa-bone text-amber-500 text-xl"></i>
+                            <div class="store-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Bone Bakery', 25, 'fas fa-bone', 'amber')">
+                                <div class="store-icon w-12 h-12 rounded-full bg-gray-100 mb-2 flex items-center justify-center">
                                 </div>
-                                <p class="text-xs font-bold text-center">Bone Bakery</p>
-                                <p class="text-xs text-center mt-1">+1 coin for all dogs</p>
+                                <p class="name text-xs font-bold text-center"></p>
+                                <p class="special-effect text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-hammer text-blue-500 text-xs mr-1"></i>
+                                    <span class="build-cost text-xs font-bold">0</span>
+                                    <span class="text-xs font-bold"> </span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">25</span>
+                                    <span class="income text-xs font-bold">0</span>
                                 </div>
                             </div>
                             
                             <!-- Store Card 4 -->
-                            <div class="card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Dog Park', 35, 'fas fa-paw', 'green')">
-                                <div class="w-12 h-12 rounded-full bg-green-100 mb-2 flex items-center justify-center">
-                                    <i class="fas fa-paw text-green-500 text-xl"></i>
+                            <div class="store-card card bg-white rounded-xl p-3 shadow-md w-24 h-32 flex flex-col items-center cursor-pointer" onclick="showPurchaseModal('Dog Park', 35, 'fas fa-paw', 'green')">
+                                <div class="store-icon w-12 h-12 rounded-full bg-gray-100 mb-2 flex items-center justify-center">
                                 </div>
-                                <p class="text-xs font-bold text-center">Dog Park</p>
-                                <p class="text-xs text-center mt-1">Attracts more dogs</p>
+                                <p class="name text-xs font-bold text-center"></p>
+                                <p class="special-effect text-xs text-center mt-1"></p>
                                 <div class="mt-auto flex items-center">
+                                    <i class="fas fa-hammer text-blue-500 text-xs mr-1"></i>
+                                    <span class="build-cost text-xs font-bold">0</span>
+                                    <span class="text-xs font-bold"> </span>
                                     <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                    <span class="text-xs font-bold">35</span>
+                                    <span class="income text-xs font-bold">0</span>
                                 </div>
                             </div>
                         </div>
@@ -460,7 +476,7 @@
                         <div class="flex items-center mt-1">
                             <i class="fas fa-coins text-yellow-500 mr-1"></i>
                             <span class="font-bold mr-4">${INITIAL_MONEY} coins</span>
-                            <span class="text-sm bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Your Turn</span>
+                            <span class="turn-indicator bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Your Turn</span>
                         </div>
                     </div>
                 </div>
@@ -483,66 +499,6 @@
                         Your Dish Cards
                     </h3>
                     <div class="flex space-x-3 overflow-x-auto pb-2">
-                        <!-- Dish Card 1 -->
-                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
-                            <div class="w-12 h-12 rounded-full bg-red-100 mb-2 flex items-center justify-center">
-                                <i class="fas fa-drumstick-bite text-red-500"></i>
-                            </div>
-                            <p class="text-xs font-bold text-center">Steak</p>
-                            <div class="mt-auto flex items-center">
-                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                <span class="text-xs font-bold">15</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Dish Card 2 -->
-                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
-                            <div class="w-12 h-12 rounded-full bg-blue-100 mb-2 flex items-center justify-center">
-                                <i class="fas fa-fish text-blue-500"></i>
-                            </div>
-                            <p class="text-xs font-bold text-center">Salmon</p>
-                            <div class="mt-auto flex items-center">
-                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                <span class="text-xs font-bold">12</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Dish Card 3 -->
-                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
-                            <div class="w-12 h-12 rounded-full bg-green-100 mb-2 flex items-center justify-center">
-                                <i class="fas fa-carrot text-green-500"></i>
-                            </div>
-                            <p class="text-xs font-bold text-center">Veggie Mix</p>
-                            <div class="mt-auto flex items-center">
-                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                <span class="text-xs font-bold">10</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Dish Card 4 -->
-                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
-                            <div class="w-12 h-12 rounded-full bg-yellow-100 mb-2 flex items-center justify-center">
-                                <i class="fas fa-cookie text-yellow-600"></i>
-                            </div>
-                            <p class="text-xs font-bold text-center">Dog Biscuit</p>
-                            <div class="mt-auto flex items-center">
-                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                <span class="text-xs font-bold">8</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Dish Card 5 -->
-                        <div class="card bg-white rounded-lg p-2 shadow-md w-20 h-28 flex-shrink-0 flex flex-col items-center">
-                            <div class="w-12 h-12 rounded-full bg-purple-100 mb-2 flex items-center justify-center">
-                                <i class="fas fa-ice-cream text-purple-500"></i>
-                            </div>
-                            <p class="text-xs font-bold text-center">Frosty Paws</p>
-                            <div class="mt-auto flex items-center">
-                                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                                <span class="text-xs font-bold">18</span>
-                            </div>
-                        </div>
-                        
                         <!-- Draw and Discard Piles -->
                         <div class="flex items-center space-x-2 flex-shrink-0">
                             <div class="bg-gray-100 rounded-lg p-2 shadow-inner w-20 h-28 flex flex-col items-center justify-center">

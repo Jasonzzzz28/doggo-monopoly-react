@@ -1,0 +1,46 @@
+{
+    "level_1": {
+        "type": "level-1",
+        "name": "Basic Dish",
+        "description": "A simple dish that's easy to prepare and serve",
+        "build_cost": 0,
+        "income": 1,
+        "special_effect": "No special effect",
+        "color": "gray",
+        "icon": "fas fa-bowl-food",
+        "image": "basic-dish.jpg"
+    },
+    "level_2": {
+        "type": "level-2", 
+        "name": "Standard Dish",
+        "description": "A well-prepared dish with good quality ingredients",
+        "build_cost": 3,
+        "income": 2,
+        "special_effect": "No special effect",
+        "color": "blue",
+        "icon": "fas fa-plate-wheat",
+        "image": "standard-dish.jpg"
+    },
+    "level_3": {
+        "type": "level-3",
+        "name": "Premium Dish",
+        "description": "A high-quality dish made with premium ingredients",
+        "build_cost": 6,
+        "income": 3,
+        "special_effect": "No special effect",
+        "color": "purple",
+        "icon": "fas fa-wine-glass",
+        "image": "premium-dish.jpg"
+    },
+    "level_4": {
+        "type": "level-4",
+        "name": "Specialty Dish",
+        "description": "A unique dish with bonus income based on dice roll",
+        "build_cost": 9,
+        "income": 2,
+        "special_effect": "Roll a dice for bonus coins",
+        "color": "gold",
+        "icon": "fas fa-crown",
+        "image": "specialty-dish.jpg"
+    }
+}

@@ -1,5 +1,5 @@
 // Configuration
-const INITIAL_MONEY = 250;
+const INITIAL_MONEY = 0;
 const MAX_STORES = 8;
 const INITIAL_DRAW_PILE_COUNT = 8; // Configurable draw pile count
 const INITIAL_DISCARD_PILE_COUNT = 0; // Configurable discard pile count
@@ -14,6 +14,11 @@ let currentDiscardPileCount = INITIAL_DISCARD_PILE_COUNT; // Current cards in di
 
 // Store purchase costs: 1st is free, then 2,3,4,7,8,9,10
 const storePurchaseCosts = [0, 2, 3, 4, 7, 8, 9, 10];
+
+let doggoCardsJson = null;
+let storesJson = null;
+let dishTypesJson = null;
+
 
 const serverUrl = window.ENV.LOCAL_BACKEND_SERVER_URL;
 // const serverUrl = window.ENV.PROD_BACKEND_SERVER_URL;
@@ -33,6 +38,8 @@ function showCreateGamePanel() {
 
 function showWaitingRoom() {
     document.getElementById('waiting-room').classList.remove('hidden');
+    document.getElementById('start-game-btn').classList.remove('hidden');
+    document.getElementById('start-game-btn').addEventListener('click', startGame);
 }
 
 async function joinGame() {
@@ -118,6 +125,13 @@ function connectToSocket() {
         }
     });
 
+    socket.on('game_update', (data) => {
+        console.log('Game started', data);
+        document.getElementById('waiting-room').classList.add('hidden');
+        localStorage.setItem('game', JSON.stringify(data));
+        showGameScreen(JSON.parse(data.game));
+    });
+
     socket.onclose = () => {
         console.log('Disconnected from game server');
         // Attempt to reconnect after 1 second
@@ -131,24 +145,8 @@ function connectToSocket() {
     return socket;
 }
 
-// function handleSocketMessage(data) {
-//     switch(data.type) {
-//         case 'playerJoined':
-//             // Handle new player joining
-//             break;
-//         case 'gameStart':
-//             // Handle game starting
-//             break;
-//         case 'playerTurn':
-//             // Handle turn updates
-//             break;
-//         default:
-//             console.log('Unknown message type:', data.type);
-//     }
-// }
-
-
 async function createGame() {
+    console.log(doggoCardsJson);
     // Get the selected number of players
     const playerCount = parseInt(document.getElementById('player-count-select').value);
     const playerName = document.getElementById('player-name-input').value;
@@ -199,31 +197,43 @@ function generatePlayerSlot() {
 }
 
 function startGame() {
-    document.getElementById('waiting-room').classList.add('hidden');
-    showGameScreen();
+    console.log("start game button clicked")
+    const gameId = localStorage.getItem('gameId');
+    const playerId = localStorage.getItem('playerId');
+    console.log("startGame gameId", gameId);
+    console.log("startGame playerId", playerId);
+    socket.emit('start_game', { gameId: gameId, playerId: playerId });
 }
 
 // Simple function to switch from landing page to game screen
-function showGameScreen() {
+function showGameScreen(gameData) {
     document.getElementById('landing-page').classList.add('opacity-0', 'pointer-events-none');
     document.getElementById('game-screen').classList.remove('hidden');
+    const playerSimpleId = localStorage.getItem('playerSimpleId');
     
     // Generate game players based on selected count
-    generateGamePlayers(localStorage.getItem('playerCount'));
+    generateGamePlayers(gameData);
     
+    const player = gameData.players[playerSimpleId];
     // Initialize coin display
-    updatePlayerCoins();
+    updatePlayerCoins(player.money);
     
     // Initialize draw pile count
-    updateDrawPileCount();
+    updateDrawPileCount(player.dishCardsDrawPileLength);
     
     // Initialize discard pile count
-    updateDiscardPileCount();
+    updateDiscardPileCount(player.dishCardsDiscardPileLength);
     
     // After transition completes, remove landing page from DOM
-    setTimeout(() => {
-        document.getElementById('landing-page').remove();
-    }, 500);
+    // setTimeout(() => {
+    //     document.getElementById('landing-page').remove();
+    // }, 500);
+    const doggoIds = gameData.npcDoggos.visible;
+    const bonusCoins = gameData.npcDoggos.extraMoney;
+    updateDoggoCards(doggoIds, bonusCoins);
+
+    const storeIds = gameData.storeMarket.visible.map(store => store.type);
+    updateStoreCards(storeIds);
 }
 
 // Store purchasing functions
@@ -372,26 +382,26 @@ function confirmBuild() {
 }
 
 // UI update functions
-function updatePlayerCoins() {
+function updatePlayerCoins(playerMoney) {
     // Update header coin display
     const headerCoinElement = document.querySelector('header .fas.fa-coins + span');
     if (headerCoinElement) {
-        headerCoinElement.textContent = playerCoins;
+        headerCoinElement.textContent = playerMoney;
     }
     
     // Update player dashboard coin display
     const dashboardCoinElement = document.querySelector('.player-avatar + div .fas.fa-coins + span');
     if (dashboardCoinElement) {
-        dashboardCoinElement.textContent = playerCoins + ' coins';
+        dashboardCoinElement.textContent = playerMoney + ' coins';
     }
     
-    // Update any other coin displays
-    const coinElements = document.querySelectorAll('.fas.fa-coins + span, .fas.fa-coins + .font-bold');
-    coinElements.forEach(el => {
-        if (el.textContent.includes('coins')) {
-            el.textContent = playerCoins;
-        }
-    });
+    // // Update any other coin displays
+    // const coinElements = document.querySelectorAll('.fas.fa-coins + span, .fas.fa-coins + .font-bold');
+    // coinElements.forEach(el => {
+    //     if (el.textContent.includes('coins')) {
+    //         el.textContent = playerCoins;
+    //     }
+    // });
 }
 
 function updateDrawPileCount() {
@@ -487,7 +497,12 @@ function showNotification(message) {
 }
 
 // Add some interactive elements
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+
+    doggoCardsJson = await fetch('./game/doggo-cards.json').then(response => response.json());
+    storesJson = await fetch('./game/store-types.json').then(response => response.json());
+    dishTypesJson = await fetch('./game/dish-types.json').then(response => response.json());
+
     // Make cards clickable
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
@@ -504,13 +519,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Start game button
+    console.log("start game button set up")
     document.getElementById('start-game-btn').addEventListener('click', startGame);
-    
-    // In a real app, this would check when all players have joined
-    // and show the start button to the host
-    setTimeout(() => {
-        document.getElementById('start-game-btn').classList.remove('hidden');
-    }, 2000);
     
     // Add random paw prints
     for (let i = 0; i < 10; i++) {
@@ -532,10 +542,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function generateGamePlayers(playerCount) {
+function generateGamePlayers(gameData) {
     const container = document.getElementById('game-players-container');
     container.innerHTML = '';
     
+    const playerCount = gameData.requiredPlayers;
     // We only show other players around the table (not the current player)
     const otherPlayersCount = playerCount - 1;
     
@@ -546,17 +557,22 @@ function generateGamePlayers(playerCount) {
             { position: 'top', color: 'blue', random: 2 }
         ],
         2: [
-            { position: 'top', color: 'blue', random: 2 },
-            { position: 'right', color: 'red', random: 3 }
+            { position: 'right', color: 'blue', random: 2 },
+            { position: 'top', color: 'red', random: 3 }
         ],
         3: [
-            { position: 'top', color: 'blue', random: 2 },
-            { position: 'right', color: 'red', random: 3 },
+            { position: 'right', color: 'blue', random: 2 },
+            { position: 'top', color: 'red', random: 3 },
             { position: 'left', color: 'green', random: 4 }
         ]
     };
     
-    const config = playerConfigs[otherPlayersCount] || playerConfigs[2];
+    const config = playerConfigs[otherPlayersCount];
+
+    const playerOrder = gameData.playerOrder;
+    const playerSimpleId = localStorage.getItem('playerSimpleId');
+    const playerIndex = playerOrder.indexOf(playerSimpleId);
+    const otherPlayers = playerOrder.slice(playerIndex + 1).concat(playerOrder.slice(0, playerIndex)).map(simpleId => gameData.players[simpleId].name);
     
     config.forEach((playerConfig, index) => {
         const playerElement = document.createElement('div');
@@ -584,7 +600,7 @@ function generateGamePlayers(playerCount) {
                 <img src="https://placedog.net/100/100?random=${playerConfig.random}" alt="Player ${index + 2}" class="w-full h-full object-cover">
             </div>
             <div class="player-info-tooltip mt-2 bg-white p-2 rounded-lg shadow-lg text-center">
-                <p class="font-bold">Player ${index + 2}</p>
+                <p class="font-bold">${otherPlayers[index]}</p>
                 <div class="flex mt-1">
                     <i class="fas fa-store text-${playerConfig.color}-500 mx-1" title="Store"></i>
                     <i class="fas fa-bone text-amber-500 mx-1" title="Bone Bakery"></i>
@@ -595,3 +611,40 @@ function generateGamePlayers(playerCount) {
         container.appendChild(playerElement);
     });
 } 
+
+function updateDoggoCards(newDoggoIds, bonusCoins) {
+    const existingDoggoCards = document.querySelectorAll('.doggo-card');
+    existingDoggoCards.forEach((existingDoggoCard, index) => {
+        const newDoggoId = newDoggoIds[index];
+        if (existingDoggoCard.id !== newDoggoId) {
+            existingDoggoCard.id = newDoggoId;
+            existingDoggoCard.querySelector('.image').querySelector('img').src = `https://placedog.net/100/100?random=${index + 1}`;
+            existingDoggoCard.querySelector('.name').textContent = doggoCardsJson[newDoggoId].name;
+            existingDoggoCard.querySelector('.stores-visited').innerHTML = doggoCardsJson[newDoggoId].stores_visited.map(storeId => {
+                return `<i class="${storesJson[storeId].icon} text-xs mr-1" style="color: ${storesJson[storeId].color}"></i>`;
+            }).join('');
+            existingDoggoCard.querySelector('.dishes-eaten').textContent = doggoCardsJson[newDoggoId].dishes_eaten;
+        }
+        existingDoggoCard.querySelector('.bonus-coins').textContent = bonusCoins[index];
+    });
+}
+
+function updateStoreCards(newStoreIds) {
+    const existingStoreCards = document.querySelectorAll('.store-card');
+    existingStoreCards.forEach((existingStoreCard, index) => {
+        const newStoreId = newStoreIds[index];
+        if (existingStoreCard.id !== newStoreId) {
+            existingStoreCard.id = newStoreId;
+            existingStoreCard.querySelector('.name').textContent = storesJson[newStoreId].name;
+            existingStoreCard.querySelector('.store-icon').innerHTML = `<i class="${storesJson[newStoreId].icon} text-[${storesJson[newStoreId].color}] text-xl}"></i>`;
+            if (storesJson[newStoreId].special_effect_icon) {
+                existingStoreCard.querySelector('.special-effect').innerHTML = storesJson[newStoreId].special_effect_icon.map((icon, index) => {
+                    return `<i class="${icon} text-xs mr-1 text-[${storesJson[newStoreId].special_effect_icon_color[index]}]"></i>`;
+                }).join('');
+                existingStoreCard.querySelector('.special-effect').innerHTML += storesJson[newStoreId].special_effect_text;
+            }
+            existingStoreCard.querySelector('.build-cost').textContent = storesJson[newStoreId].build_cost;
+            existingStoreCard.querySelector('.income').textContent = storesJson[newStoreId].income_per_doggo;
+        }
+    });
+}
