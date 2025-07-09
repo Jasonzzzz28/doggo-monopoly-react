@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doggo Monopoly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: #FFF5E6;
+            color: #5A3E36;
+        }
+        
+        .doggo-table {
+            background: radial-gradient(circle, #F8E5D6 0%, #E8C4A8 100%);
+            border: 12px solid #D4A76A;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .player-avatar {
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .player-avatar:hover {
+            transform: scale(1.1);
+            border-color: #FF9F1C;
+        }
+        
+        .player-info-tooltip {
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .player-avatar:hover + .player-info-tooltip {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .floating-dog {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .paw-print {
+            position: absolute;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        /* Landing page specific */
+        .landing-bg {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFD6A5 100%);
+        }
+        
+        .welcome-box {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .landing-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .landing-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .store-card-purchased {
+            position: relative;
+        }
+        
+        .store-card-purchased::after {
+            content: "UNFINISHED";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #EF4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html> 
