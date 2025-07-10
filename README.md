@@ -5,6 +5,9 @@ A delightful online multiplayer board game where players host adorable doggos an
 ## 🎮 Game Overview
 
 **Doggo Monopoly** is a React-based online multiplayer board game that puts a fun, canine twist on the classic monopoly experience. Players take on the role of pet business owners, building various pet-related establishments to earn coins and dominate the market.
+<img width="1280" height="683" style="width: 90%; height: auto" alt="Screenshot 2025-07-10 at 11 43 40 AM" src="https://github.com/user-attachments/assets/dc22f70c-03f6-4db8-b393-c2ba52baac1a" />
+<img width="1280" height="683" style="width: 90%; height: auto" alt="Screenshot 2025-07-10 at 11 43 22 AM" src="https://github.com/user-attachments/assets/6d1898ab-4071-4ca7-88bb-08a110573873" />
+<img width="1280" height="683" style="width: 90%; height: auto" alt="Screenshot 2025-07-10 at 1 05 26 PM" src="https://github.com/user-attachments/assets/55aba4d9-cd06-4ee7-9747-6669e32968c4" />
 
 ## 🚀 Getting Started
 
