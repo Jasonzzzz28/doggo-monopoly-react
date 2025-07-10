@@ -234,27 +234,31 @@ function showGameScreen(gameData) {
     updateStoreCards(storeIds);
 
     const existingStoreCards = document.querySelectorAll('.store-card');
+    const playerStoreCount = player.storesCards ? player.storesCards.length : 0;
     existingStoreCards.forEach(card => {
-        card.onclick = () => console.log('Store card', card.id);
+        card.onclick = () => showPurchaseModal(card.id, card.index,playerStoreCount);
     });
     document.getElementById('landing-page').classList.add('opacity-0', 'pointer-events-none');
     document.getElementById('game-screen').classList.remove('hidden');
 }
 
 // Store purchasing functions
-function showPurchaseModal(storeId) {  
+function showPurchaseModal(storeId, storeIndex, playerStoreCount) {  
+    const purchaseCost = storePurchaseCosts[playerStoreCount];
     const storeData = storesJson[storeId];
-    const purchaseCost = storeData.build_cost;
-    const storeNumber = storesPurchased + 1;
+    const buildCost = storeData.build_cost;
+    const storeNumber = playerStoreCount + 1;
     const iconClass = storeData.icon;
     const colorClass = storeData.color;
     const storeName = storeData.name;
+
+
     
     // Update modal content
     document.getElementById('purchase-store-info').innerHTML = `
         <div class="flex items-center justify-center mb-2">
             <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                <i class="${iconClass} text-${colorClass}-500 text-xl"></i>
+                <i class="${iconClass} text-[${colorClass}] text-xl"></i>
             </div>
             <div class="text-left">
                 <p class="font-bold text-amber-800">${storeName}</p>
@@ -271,7 +275,7 @@ function showPurchaseModal(storeId) {
     document.getElementById('purchase-modal').setAttribute('data-build-cost', buildCost);
     document.getElementById('purchase-modal').setAttribute('data-icon-class', iconClass);
     document.getElementById('purchase-modal').setAttribute('data-color-class', colorClass);
-    
+    document.getElementById('purchase-modal').setAttribute('data-store-index', storeIndex);
     // Show modal
     document.getElementById('purchase-modal').classList.remove('hidden');
 }
@@ -286,19 +290,12 @@ function confirmPurchase() {
     const iconClass = document.getElementById('purchase-modal').getAttribute('data-icon-class');
     const colorClass = document.getElementById('purchase-modal').getAttribute('data-color-class');
     const purchaseCost = storePurchaseCosts[storesPurchased];
-    
-    // Check if player has reached the maximum number of stores (8)
-    if (purchasedStores.length + builtStores.length >= MAX_STORES) {
-        showNotification('You have reached the maximum of 8 stores!');
-        closePurchaseModal();
-        return;
-    }
-    
-    // Check if player has enough coins
-    if (playerCoins < purchaseCost) {
-        alert('Not enough coins to purchase this store!');
-        return;
-    }
+
+    socket.emit('player_buy_store', {
+        gameId: localStorage.getItem('gameId'),
+        playerId: localStorage.getItem('playerId'),
+        storeIndex: storeIndex
+    });
     
     // Deduct coins
     playerCoins -= purchaseCost;
